@@ -1,5 +1,6 @@
 package com.d209.childmade.member.entity;
 
+import com.d209.childmade._common.oauth2.user.ProviderType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,37 +17,58 @@ public class Member {
     @Column(name = "member_id")
     private Integer id;
 
-    @Column(nullable = false, length = 20)
-    private String email;
+    @Column
+    private String socialId;
 
-    @Column(nullable = false, length = 30)
-    private String name;
-
-    @Column(nullable = false, length = 30)
-    private String nickname;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private ProviderType providerType; //로그인 형태
 
     @Column(nullable = false)
-    private String password;
+    private String email;
 
-    @Column
-    private String profile;
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String nickname;
+
+    private String profile; //프로필 사진 url
 
     @Builder
-    private Member(String email, String name, String nickname, String password, String profile) {
+    public Member(String socialId, ProviderType providerType, String email, String name, String nickname, String profile) {
+        this.socialId = socialId;
+        this.providerType = providerType;
         this.email = email;
         this.name = name;
         this.nickname = nickname;
-        this.password = password;
         this.profile = profile;
     }
 
-    public static Member of(String email, String name, String nickname, String encodePw, String profile) {
+    public static Member of(String socialId, ProviderType providerType, String email, String name, String nickname, String profile) {
         return builder()
+                .socialId(socialId)
+                .providerType(providerType)
                 .email(email)
                 .name(name)
                 .nickname(nickname)
-                .password(encodePw)
                 .profile(profile)
                 .build();
+    }
+
+    public void updateProfileImage(String imgUrl) {
+        this.profile = imgUrl;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
